@@ -1,4 +1,4 @@
-from config import ANIME_TYPE_MAP
+from config import ANIME_TYPE_MAP, COLLECTION_TYPE_REVERSE_MAP
 
 
 def parse_anime_info(collection):
@@ -21,6 +21,10 @@ def parse_anime_info(collection):
     type_id = subject.get("type", 0)
     type_name = ANIME_TYPE_MAP.get(type_id, "未知")
     
+    # 获取收藏状态名称
+    collection_type_id = collection.get("type", 0)
+    collection_status = COLLECTION_TYPE_REVERSE_MAP.get(collection_type_id, "未知")
+    
     anime_info = {
         "番剧名": name,
         "中文名": name_cn,
@@ -30,7 +34,7 @@ def parse_anime_info(collection):
         "评分": subject.get("score", 0),
         "用户评分": collection.get("rate", 0),
         "类型": type_name,
-        "状态": collection.get("type_name", ""),
+        "状态": collection_status,
         "总收藏数": subject.get("collection_total", 0),
         "排名": subject.get("rank", 0)
     }

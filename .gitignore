@@ -208,3 +208,11 @@ __marimo__/
 
 # Trae
 .trae/
+
+# 项目特定文件
+cache/
+logs/
+*.xlsx
+*.csv
+*.txt
+.env

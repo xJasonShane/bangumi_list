@@ -1,30 +1,31 @@
+from typing import List, Dict, Any
 from config import ANIME_TYPE_MAP, COLLECTION_TYPE_REVERSE_MAP
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
-def parse_anime_info(collection):
+def parse_anime_info(collection: Dict[str, Any]) -> Dict[str, Any]:
     """
     解析番剧信息
+
     :param collection: 单条收藏记录
     :return: 解析后的番剧信息字典
     """
-    subject = collection["subject"]
-    
-    # 提取基本信息
+    subject = collection.get("subject", {})
+
     name = subject.get("name", "")
     name_cn = subject.get("name_cn", "")
-    
-    # 当中文名空时用番剧名代替
+
     if not name_cn:
         name_cn = name
-    
-    # 获取类型名称
+
     type_id = subject.get("type", 0)
     type_name = ANIME_TYPE_MAP.get(type_id, "未知")
-    
-    # 获取收藏状态名称
+
     collection_type_id = collection.get("type", 0)
     collection_status = COLLECTION_TYPE_REVERSE_MAP.get(collection_type_id, "未知")
-    
+
     anime_info = {
         "番剧名": name,
         "中文名": name_cn,
@@ -38,14 +39,18 @@ def parse_anime_info(collection):
         "总收藏数": subject.get("collection_total", 0),
         "排名": subject.get("rank", 0)
     }
-    
+
     return anime_info
 
 
-def get_anime_list(user_collections):
+def get_anime_list(user_collections: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     将收藏列表转换为番剧信息列表
+
     :param user_collections: 用户收藏列表
     :return: 解析后的番剧信息列表
     """
-    return [parse_anime_info(collection) for collection in user_collections]
+    logger.debug(f"开始解析 {len(user_collections)} 条收藏记录")
+    anime_list = [parse_anime_info(collection) for collection in user_collections]
+    logger.debug(f"成功解析 {len(anime_list)} 条番剧信息")
+    return anime_list
